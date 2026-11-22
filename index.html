@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gestão à vista - Coca Cola FEMSA Marília</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#121314;--panel:#1b1c1e;--line:#2c2e31;--tx:#eceeef;--mut:#8b9096;--ok:#22d65a;--bad:#ff3b2f;--warn:#f5b72b;--blue:#3b82f6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Barlow Semi Condensed",system-ui,"Segoe UI",Arial,sans-serif;font-size:16px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:24px;font-weight:600}
+h2{margin:0 0 12px;font-size:19px;font-weight:600}
+.sub{color:var(--mut);font-size:14px}
+main{padding:16px 20px;display:grid;gap:14px;grid-template-columns:repeat(12,1fr);max-width:1400px;margin:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+.tall{grid-row:span 2}
+#chart text,#chart2 text{font-size:15px}
+.lg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}.lg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px}
+@media(max-width:900px){.c8,.c6,.c4,.c3{grid-column:span 12}.tall{grid-row:auto}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi b{display:block;font-size:34px;font-weight:600;line-height:1.1}
+.kpi span{color:var(--mut);font-size:14px}
+label{display:block;font-size:14px;color:var(--mut);margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--bg);color:var(--tx);border:1px solid #3a3d41;border-radius:8px;padding:11px 12px;font:inherit;font-size:18px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.form{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
+@media(max-width:800px){.form{grid-template-columns:repeat(2,1fr)}}
+.stop{grid-column:1/-1;display:none;border:1px solid var(--bad);background:#2a1513;border-radius:8px;padding:12px;gap:12px;grid-template-columns:2fr 1fr 2fr}
+.stop.on{display:grid}
+@media(max-width:800px){.stop.on{grid-template-columns:1fr}}
+.stop p{grid-column:1/-1;margin:0;color:#ff8a80;font-weight:600}
+button{font:inherit;font-weight:600;font-size:17px;border:0;border-radius:8px;padding:12px 18px;cursor:pointer;background:var(--ok);color:#06200e}
+button.ghost{background:transparent;color:var(--tx);border:1px solid #3a3d41;padding:8px 12px;font-size:15px}
+#msg{min-height:22px;margin-top:10px;font-size:15px}
+.err{color:#ff8a80}.good{color:var(--ok)}
+svg{width:100%;height:auto;display:block}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+@media(max-width:600px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px;text-align:left;color:var(--tx);font-size:15px;font-weight:500}
+.tile small{display:block;color:var(--mut);font-size:13px}
+.tile b{font-size:19px;font-weight:600}
+.tile.ok{background:#0f3a1d;border-color:#1c7a39}
+.tile.bad{background:#401613;border-color:#a8261c}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;min-width:520px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:500;font-size:14px}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:14px;background:#401613;color:#ff8a80}
+.empty{color:var(--mut);padding:10px 0}
+#fabf{display:none}body.fab #fabf{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#fabf input{width:auto}
+img[hidden]{display:none}
+#foot{display:flex;align-items:center;justify-content:center;gap:10px;padding:6px 16px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+#foot .lg-img{height:26px;width:auto}
+.logos{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.logos .lg-img{height:34px;width:auto}.logos .jv-img{height:36px;width:auto}
+#foot .jv-img{height:26px;width:auto}
+.vsep{width:1px;height:24px;background:var(--line)}
+.lg-img[hidden]+.vsep{display:none}
+body.light .jv-img{filter:invert(1)}
+body.locked #foot{display:none}
+body.fit #foot{flex:none;padding:4px 16px}
+#login{overflow:hidden}
+.bgfx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.bgfx i{position:absolute;display:block}
+.b1{width:480px;height:480px;left:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--ok) 45%,transparent),transparent 70%);animation:drift 16s ease-in-out infinite}
+.b2{width:540px;height:540px;right:-170px;bottom:-190px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--tx) 14%,transparent),transparent 70%);animation:drift 21s ease-in-out infinite reverse}
+.r1{width:170px;height:170px;left:12%;bottom:14%;border-radius:50%;border:2px solid color-mix(in srgb,var(--ok) 45%,transparent);animation:float 11s ease-in-out infinite}
+.r2{width:90px;height:90px;right:16%;top:18%;border-radius:50%;border:2px solid color-mix(in srgb,var(--tx) 25%,transparent);animation:float 9s ease-in-out -3s infinite}
+.s1{width:110px;height:110px;right:10%;bottom:22%;border-radius:22px;border:2px solid color-mix(in srgb,var(--ok) 40%,transparent);animation:spin 26s linear infinite}
+.s2{width:60px;height:60px;left:18%;top:20%;border-radius:14px;background:color-mix(in srgb,var(--ok) 22%,transparent);animation:float 13s ease-in-out -5s infinite}
+.s3{width:130px;height:130px;left:6%;top:52%;border-radius:28px;border:2px solid color-mix(in srgb,var(--tx) 18%,transparent);animation:spin 34s linear infinite reverse}
+.dt{width:14px;height:14px;border-radius:50%;background:color-mix(in srgb,var(--ok) 70%,transparent);animation:float 8s ease-in-out infinite}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,50px) scale(1.15)}}
+@keyframes float{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(0,-42px) rotate(25deg)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+#login .lbox{position:relative;z-index:1;background:color-mix(in srgb,var(--panel) 78%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 24px 70px rgba(0,0,0,.5);animation:up .6s ease both}
+@media(prefers-reduced-motion:reduce){.bgfx i,#login .lbox{animation:none!important}}
+#ask{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:20px}
+#ask.on{display:flex}#ask .lbox button{width:100%;margin-top:10px}#ask h2{font-size:21px}
+#adm{display:none}body.adm-view #adm{display:block}
+body.adm-view header>div:first-child,body.adm-view #clr,body.adm-view #chg{display:none!important}
+body.adm-view header{justify-content:flex-end}
+body.adm-view main>section:not(#adm){display:none!important}
+body.adm-view{height:auto!important;overflow:auto!important;display:block!important}
+body.adm-view main{display:block!important;max-width:1400px!important;margin:auto!important}
+.admgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:900px){.admgrid{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:10px;padding:14px}
+.box h3{margin:0 0 10px;font-size:17px;font-weight:600}
+.cr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cr label{margin:0;font-size:16px}
+.cr input[type=color]{width:70px;height:38px;padding:2px;cursor:pointer}
+.addrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.addrow input{flex:1;min-width:130px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid #3a3d41;border-radius:99px;padding:3px 6px 3px 12px;font-size:15px}
+.chip a{color:var(--mut);text-decoration:none;padding:0 6px}
+.addb.on{border-style:solid;border-color:var(--ok)}
+svg text[fill="#eceeef"]{fill:var(--tx)}
+.tile.ok,.tile.bad{color:#fff}
+#login{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.lbox{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px}
+.lbox h1{margin-bottom:4px}.lbox .sub{margin-bottom:16px}
+body.locked #side,body.locked header,body.locked main{display:none!important}
+body:not(.locked) #login{display:none}
+.adm-only{display:none}body.role-adm .adm-only{display:inline-block}
+body.fab #setup,body.fab #lanc,body.fab #clr,body.fab #chg{display:none!important}
+
+@media(min-width:1100px) and (min-height:760px){body.fit.fab main{grid-template-rows:auto auto minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr)}}
+body{padding-left:180px}
+#side{position:fixed;left:0;top:0;bottom:0;width:180px;background:#161718;border-right:1px solid var(--line);padding:12px 8px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;z-index:5}
+.sh{color:var(--mut);font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:0 4px}
+#tabs{display:flex;flex-direction:column;gap:6px}
+.tabx{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;background:#1b1c1e}
+.tabx.on{border-color:var(--ok);background:#12301c}
+.tabb{flex:1;text-align:left;background:transparent;color:var(--tx);padding:8px 10px;font-size:16px;font-weight:600;min-width:0;border-radius:8px}
+.tabb small{display:block;color:var(--mut);font-size:12px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabd{color:var(--mut);padding:8px;text-decoration:none;align-self:center;font-size:14px}
+.addb{background:transparent;border:1px dashed #3a3d41;color:var(--ok);font-size:16px}
+@media(max-width:900px){body{padding-left:0}#side{position:static;width:auto;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--line);padding:8px 12px}#tabs{flex-direction:row}.tabx{min-width:150px}.sh{display:none}}
+@media(min-width:1100px) and (min-height:760px){
+body.fit{height:100vh;overflow:hidden;display:flex;flex-direction:column}
+body.fit header{flex:none;padding:8px 20px}
+body.fit h1{font-size:22px}
+body.fit main{flex:1;min-height:0;width:100%;max-width:none;margin:0;padding:10px 16px;gap:10px;grid-template-rows:auto auto minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,.8fr)}
+body.fit .card{display:flex;flex-direction:column;min-height:0;padding:10px 14px}
+body.fit .kpis{display:grid}
+body.fit .kpi b{font-size:28px}
+body.fit h2{margin:0 0 6px;font-size:17px}
+body.fit #chart,body.fit #chart2,body.fit #donut,body.fit #tiles,body.fit #stops{flex:1;min-height:0}
+body.fit #chart svg,body.fit #chart2 svg{height:100%}
+body.fit #chart2{display:flex;flex-direction:column}
+body.fit #chart2 svg{flex:1;min-height:0}
+body.fit .lg{margin-top:4px;font-size:13px}
+body.fit #donut{display:flex;justify-content:center}
+body.fit #donut svg{height:100%;width:auto;max-width:none}
+body.fit #stops{overflow:auto}
+body.fit .tiles{grid-template-columns:repeat(8,1fr);gap:6px;align-content:stretch}
+body.fit .tile{padding:3px 6px;font-size:12px}
+body.fit .tile b{font-size:15px}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body class="locked">
+<div id="login"><div class="bgfx"><i class="b1"></i><i class="b2"></i><i class="r1"></i><i class="r2"></i><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="dt" style="left:30%;top:70%"></i><i class="dt" style="left:72%;top:36%;animation-delay:-2s"></i><i class="dt" style="left:55%;top:84%;animation-delay:-4s"></i><i class="dt" style="left:84%;top:62%;animation-delay:-6s"></i></div><div class="lbox"><h1 id="loginT">Gestão à vista - Coca Cola FEMSA Marília</h1><div class="sub">Entre com o seu perfil e a senha</div>
+<label for="perfil">Perfil</label><select id="perfil"><option value="op">Operador</option><option value="adm">Administrador</option></select>
+<label for="senha" style="margin-top:12px">Senha</label><input id="senha" type="password" autocomplete="current-password">
+<button id="entrar" type="button" style="width:100%;margin-top:14px">Entrar</button><div id="lerr" class="err" style="margin-top:10px"></div><div class="logos"><img class="lg-img" alt="Coca-Cola FEMSA" hidden><span class="vsep"></span><img class="jv-img" alt="JV Insight" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTIiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWRhc2hhcnJheT0iMjcwIDU2LjciLz48cGF0aCBkPSJNNDYgMzZWNjRDNDYgNzQgNDAgODAgMzIgNzgiIHN0cm9rZS13aWR0aD0iOSIvPjxwYXRoIGQ9Ik01OCAzNkw3MCA3OEw4MiAzNiIgc3Ryb2tlLXdpZHRoPSI5Ii8+PC9nPjxjaXJjbGUgY3g9IjEwNC4zIiBjeT0iMzIuOCIgcj0iNi41IiBmaWxsPSIjZmZmIi8+PC9zdmc+"></div></div></div>
+<div id="ask"><div class="lbox"><h2 id="askT"></h2><div id="askP" class="sub" style="margin-bottom:6px"></div>
+<button id="askSim" type="button">Sim, armazenar e continuar</button><button id="askNao" class="ghost" type="button">Não armazenar, só continuar</button><button id="askCan" class="ghost" type="button">Cancelar</button></div></div>
+<aside id="side"><div class="sh">Linhas</div><div id="tabs"></div><button id="addTab" class="addb" type="button">+ Nova linha</button><button id="admTab" class="addb adm-only" type="button">⚙ Administração</button><div id="dbst" class="sub" style="padding:4px"></div></aside>
+<header>
+  <div>
+    <h1 id="ttl">Produção por hora</h1>
+    <div style="margin-top:6px"><span class="pill" style="background:#0f3a1d;color:var(--ok);font-size:18px;padding:4px 12px">Capacidade: <b id="metaTx"></b> caixas/h = 100% · Meta de eficiência: <b id="mpTx"></b>%</span></div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+    <button class="ghost" id="chg">Trocar linha ou produto</button>
+    <span class="pill" id="who" style="background:transparent;color:var(--ok);border:1px dashed #3a3d41;border-radius:8px;padding:7px 12px;font-size:16px;align-self:center"></span>
+    <button class="ghost" id="out">Sair</button>
+    <button class="ghost" id="clr">Zerar dia</button>
+  </div>
+</header>
+<main>
+  <section class="card c12" id="adm">
+    <h2>Administração</h2>
+    <div class="admgrid">
+      <div class="box"><h3>Cores do site</h3>
+        <div class="cr"><label for="cBg">Cor de fundo</label><input type="color" id="cBg"></div>
+        <div class="cr"><label for="cPn">Cor dos quadros</label><input type="color" id="cPn"></div>
+        <div class="cr"><label for="cTx">Cor da letra</label><input type="color" id="cTx"></div>
+        <button class="ghost" id="cReset" type="button">Voltar às cores padrão</button>
+        <div class="sub" style="margin-top:8px">Escolha cores com bom contraste entre fundo e letra.</div></div>
+      <div class="box"><h3>Linhas</h3><div class="addrow"><input id="nLinha" placeholder="Ex.: Linha 7"><button id="aLinha" type="button">Adicionar</button></div><div id="lstLinhas" class="chips"></div></div>
+      <div class="box"><h3>Refrigerantes</h3><div class="addrow"><input id="nProd" placeholder="Nome do refrigerante"><input id="nMarca" placeholder="Marca (ex.: Fanta)"><button id="aProd" type="button">Adicionar</button></div><div id="lstProds"></div></div>
+      <div class="box"><h3>Embalagens</h3><div class="addrow"><input id="nEmb" placeholder="Ex.: PET 500 ml"><button id="aEmb" type="button">Adicionar</button></div><div id="lstEmbs" class="chips"></div></div>
+      <div class="box"><h3>Meta de eficiência da fábrica</h3>
+        <label for="mFab">Meta da fábrica (%)</label><div class="addrow"><input id="mFab" type="number" inputmode="numeric" min="1" max="100" placeholder="Ex.: 85"><button id="sFab" type="button">Salvar</button></div><div id="fabMsg" style="min-height:20px"></div>
+        <div class="sub" style="margin-top:8px">Vale para a aba Fábrica (linha tracejada do gráfico e cores). Deixe vazio para usar a média das metas das linhas.</div></div>
+      <div class="box"><h3>Exportar dados para Excel</h3>
+        <div class="sub" style="margin-bottom:10px">Gera uma planilha (.xlsx) com todos os dados armazenados: resumo por dia, fábrica por hora, linhas por hora e paradas.</div>
+        <div class="addrow"><div style="flex:1;min-width:130px"><label for="xDe">Data inicial</label><input type="date" id="xDe"></div><div style="flex:1;min-width:130px"><label for="xAte">Data final</label><input type="date" id="xAte"></div></div>
+        <div class="sub" style="margin-bottom:10px">Para um único dia, coloque a mesma data nos dois campos. Deixe vazio para exportar todos os dias.</div>
+        <button id="xlBtn" type="button">Gerar planilha Excel</button><div id="xlMsg" style="min-height:20px;margin-top:8px"></div></div>
+      <div class="box"><h3>Nome da tela de entrada</h3>
+        <label for="tEntrada">Título que aparece na entrada</label>
+        <div class="addrow"><input id="tEntrada" maxlength="80"><button id="sTit" type="button">Salvar</button></div>
+        <div class="sub">Deixe vazio e salve para voltar ao nome original.</div><div id="titMsg" style="min-height:20px"></div></div>
+      <div class="box"><h3>Logo no rodapé</h3>
+        <div class="sub" style="margin-bottom:8px">Envie o logo oficial da Coca-Cola FEMSA (PNG ou JPG, de preferência com fundo transparente). Ele aparece colorido no rodapé de todas as telas e na tela de entrada.</div>
+        <input id="logoFile" type="file" accept="image/*">
+        <div class="addrow" style="margin-top:10px"><button id="logoRm" class="ghost" type="button">Remover logo</button></div><div id="logoMsg" style="min-height:20px"></div></div>
+      <div class="box"><h3>Alterar senha de usuário</h3>
+        <label for="pUser">Usuário</label><select id="pUser"><option value="op">Operador</option><option value="adm">Administrador</option></select>
+        <label for="pOp" style="margin-top:10px">Nova senha</label><input id="pOp" type="password" autocomplete="new-password">
+        <label for="pOp2" style="margin-top:10px">Repetir a nova senha</label><input id="pOp2" type="password" autocomplete="new-password">
+        <div class="addrow" style="margin-top:12px"><button id="sPass" type="button">Salvar senha</button><button id="rPass" class="ghost" type="button">Voltar à senha padrão</button></div><div id="passMsg" style="min-height:20px"></div></div>
+    </div>
+  </section>
+
+  <section class="card c12" id="setup">
+    <h2>Linha e produto em produção</h2>
+    <div class="form">
+      <div><label for="linha">Linha</label><select id="linha"></select></div>
+      <div><label for="prod">Refrigerante</label><select id="prod"></select></div>
+      <div><label for="emb">Embalagem</label><select id="emb"></select></div>
+      <div><label for="meta">Capacidade (caixas por hora = 100%)</label><input id="meta" type="number" inputmode="numeric" min="1" placeholder="Ex.: 1000"></div>
+      <div><label for="op">Ordem de produção (só números)</label><input id="op" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="12" placeholder="Ex.: 123456"></div>
+      
+      <div><label for="mp">Meta de eficiência da linha (%)</label><input id="mp" type="number" inputmode="numeric" min="1" max="100" placeholder="Ex.: 85"></div>
+      <div class="sub" style="grid-column:span 2">A meta é definida por produto. O produto e a capacidade ficam salvos e, da próxima vez, a meta aparece sozinha.</div>
+      <div style="grid-column:1/-1"><button id="ok">Salvar e começar</button><span id="cfgMsg" class="err" style="margin-left:12px"></span></div>
+    </div>
+  </section>
+
+  <section class="card c12" id="fabf"><label for="fDia" style="margin:0;font-size:16px">Dia</label><input type="date" id="fDia"><button class="ghost" id="fHoje" type="button">Hoje</button><span class="sub" id="fInfo"></span></section>
+  <section class="card c12 kpis" aria-label="Resumo">
+    <div class="kpi"><b id="kEf">–</b><span>Eficiência do dia</span></div>
+    <div class="kpi"><b id="kProd">0</b><span>Caixas produzidas</span></div>
+    <div class="kpi"><b id="kMeta">0</b><span>Meta das horas lançadas</span></div>
+    <div class="kpi"><b id="kStop">0 min</b><span>Tempo parado informado</span></div>
+  </section>
+
+  <section class="card c12" id="lanc">
+    <h2>Lançar produção da hora</h2>
+    <div class="form">
+      <div><label for="hora">Hora</label><select id="hora"></select></div>
+      <div><label for="qtd">Caixas produzidas</label><input id="qtd" type="number" inputmode="numeric" min="0" placeholder="0"></div>
+      <div><label>Eficiência da hora</label><div id="pct" style="font-size:30px;font-weight:600;line-height:1.3">–</div></div>
+      <div><button id="save" style="width:100%">Registrar hora</button></div>
+      <div class="stop" id="stop">
+        <p>Não bateu a meta. Informe a parada para registrar.</p>
+        <p id="eq" style="color:var(--warn);font-size:19px"></p>
+        <div id="lst" style="grid-column:1/-1"></div>
+        <div><label for="motivo">Motivo da parada</label><select id="motivo"></select></div>
+        <div><label for="min">Tempo parado (min)</label><input id="min" type="number" inputmode="numeric" min="1" max="60" placeholder="0"></div>
+        <div><label for="obs">Observação (opcional)</label><input id="obs" type="text" maxlength="120"></div>
+      <div style="grid-column:1/-1"><button id="add" class="ghost" type="button">Adicionar parada</button></div>
+      </div>
+    </div>
+    <div id="msg" role="status"></div>
+  </section>
+
+  <section class="card c6"><h2>Eficiência por hora</h2><div id="chart"></div></section>
+  <section class="card c6"><h2>Eficiência diária</h2><div id="donut"></div></section>
+  <section class="card c6"><h2>Hora a hora</h2><div class="tiles" id="tiles"></div></section>
+  <section class="card c6"><h2>Paradas por hora (% da hora parada, por motivo)</h2><div id="chart2"></div></section>
+
+  <section class="card c12">
+    <h2>Paradas do dia</h2>
+    <div class="scroll" id="stops"></div>
+  </section>
+</main>
+<footer id="foot"><img class="lg-img" alt="Coca-Cola FEMSA" hidden><span id="logoTx">Coca-Cola FEMSA · Marília</span><span class="vsep"></span><img class="jv-img" alt="JV Insight" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTIiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWRhc2hhcnJheT0iMjcwIDU2LjciLz48cGF0aCBkPSJNNDYgMzZWNjRDNDYgNzQgNDAgODAgMzIgNzgiIHN0cm9rZS13aWR0aD0iOSIvPjxwYXRoIGQ9Ik01OCAzNkw3MCA3OEw4MiAzNiIgc3Ryb2tlLXdpZHRoPSI5Ii8+PC9nPjxjaXJjbGUgY3g9IjEwNC4zIiBjeT0iMzIuOCIgcj0iNi41IiBmaWxsPSIjZmZmIi8+PC9zdmc+"></footer>
+
+<script>
+(function(){
+var KEY="painel-producao-v1";
+var MOTIVOS=["Paradas operacionais","Quebra de máquina","Falta de material (caixa, palete, insumo)","Troca de produto / setup","Limpeza / CIP","Falta de operador","Manutenção programada","Falha de energia","Ajuste de qualidade","Outro"];
+var ABAS=[],ativa=0,S,CAT={},DB=null,timers={},lastCat="",HIST=[],ALL=[],fabDia="";
+try{var r=localStorage.getItem(KEY);if(r){var p=JSON.parse(r);if(p&&p.abas){ABAS=p.abas;ativa=p.ativa||0}else if(p&&p.rows){ABAS=[p]}}}catch(e){}
+if(!ABAS.length)ABAS=[{meta:0,linha:"",produto:"",rows:{}}];
+ABAS.forEach(function(a){for(var k in (a.produtos||{}))CAT[k]=a.produtos[k]});
+ABAS.forEach(function(a,i){a.produtos=CAT;a.produto=a.produto||"";a.metaPct=a.metaPct||85;a.rows=a.rows||{};if(!a.id)a.id=uid();if(!a.ord)a.ord=Date.now()+i});
+if(ativa>=ABAS.length||ativa<-1)ativa=0;S=ativa<0?buildFab():ABAS[ativa];
+function save(){try{localStorage.setItem(KEY,JSON.stringify({abas:ABAS,ativa:ativa}));}catch(e){}dbSyncAba();var c=JSON.stringify(CAT);if(c!==lastCat){lastCat=c;dbSyncCfg()}}
+var $=function(i){return document.getElementById(i)};
+var fmt=function(n){return Math.round(n).toLocaleString("pt-BR")};
+var hh=function(h){return (h<10?"0":"")+h+"h"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+var hs=$("hora"),ms=$("motivo");var cur=[];
+for(var i=0;i<24;i++)hs.add(new Option(hh(i)+" às "+hh((i+1)%24),i));
+MOTIVOS.forEach(function(m){ms.add(new Option(m,m))});
+hs.value=new Date().getHours();
+
+function mOf(d){return d.meta||S.meta}
+function pOf(d){return d.pct||S.metaPct||100}
+var PAL=["#3b82f6","#ff3b2f","#f5b72b","#a855f7","#14b8a6","#f97316","#ec4899","#84cc16","#06b6d4","#9ca3af"];
+function colOf(m){var i=MOTIVOS.indexOf(m);return PAL[i<0?9:i%10]}
+function listOf(d){return d?(d.paradas||(d.motivo?[{motivo:d.motivo,min:d.min}]:[])):[]}
+function shortN(s){s=s.split(" (")[0];return s.length>15?s.slice(0,14)+"…":s}
+function eqMin(){var q=+$("qtd").value;return Math.max(1,Math.round((S.meta-q)/S.meta*60))}
+function sumCur(){return cur.reduce(function(a,x){return a+x.min},0)}
+function hoje(){return new Date().toLocaleDateString("sv-SE")}
+function fmtDia(d){var p=String(d).split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:d}
+function loadHist(cb){
+  if(DB){DB.collection("painel_hist").get().then(function(qs){HIST=qs.docs.map(function(d){return clean(d.data())});cb()}).catch(function(){cb()})}
+  else{try{HIST=JSON.parse(localStorage.getItem("painel-hist-v1")||"[]")}catch(e){HIST=[]}cb()}
+}
+function putRows(m,id,rows,fb,doc,live){Object.keys(rows||{}).forEach(function(h){var r=rows[h];if(!r.dia&&live)r.dia=fb;var dia=r.dia||fb;m[id+"|"+dia+"|"+h]={id:id,dia:dia,h:+h,r:r,ln:r.linha||doc.linha||"",pd:r.produto||doc.produto||"",op:r.op||doc.op||""}})}
+function rebuildAll(){var m={};
+  (HIST||[]).slice().sort(function(a,b){return String(a.arquivadoEm).localeCompare(String(b.arquivadoEm))}).forEach(function(d){putRows(m,d.lid||d.linha||"?",d.rows,d.dia||hoje(),d,false)});
+  ABAS.forEach(function(a){putRows(m,a.id,a.rows,hoje(),a,true)});
+  ALL=Object.keys(m).map(function(k){return m[k]})}
+function refreshFab(){loadHist(function(){if(ativa<0){S=buildFab();applySetup();render()}})}
+function buildFab(){
+  rebuildAll();var day=fabDia||hoje();
+  var F={linha:"Fábrica",produto:"todas as linhas · "+fmtDia(day),rows:{},pronto:true,produtos:CAT,sabor:"",emb:"",meta:0,metaPct:85,fab:true},ms0=0,mn=0;
+  var lm={};ALL.forEach(function(e){if(e.dia===day)lm[e.id]=e.r.meta||0});for(var k in lm)F.meta+=lm[k];
+  ABAS.forEach(function(a){if(a.metaPct){ms0+=a.metaPct;mn++}});
+  F.metaPct=(CFG&&CFG.metaFab>0)?CFG.metaFab:(mn?Math.round(ms0/mn):85);
+  for(var h=0;h<24;h++){
+    var n=0,q=0,m=0,ps=0,real={},tmin=0;
+    ALL.forEach(function(e){if(e.dia!==day||e.h!==h)return;var d=e.r;n++;q+=d.qtd;m+=(d.meta||0);ps+=(d.pct||85);listOf(d).forEach(function(x){real[x.motivo]=(real[x.motivo]||0)+x.min;tmin+=x.min})});
+    if(!n)continue;
+    var pr=[],pn=[];Object.keys(real).forEach(function(k){pr.push({motivo:k,min:real[k]});pn.push({motivo:k,min:real[k]/n})});
+    F.rows[h]={qtd:q,meta:m,pct:ps/n,linha:"Fábrica",produto:n+(n>1?" linhas":" linha"),paradas:pn,pr:pr,min:tmin};
+  }
+  F.info=Object.keys(F.rows).length?"":"Sem dados para este dia.";return F;
+}
+function ptxt(d){var a=d.pr||d.paradas||[{motivo:d.motivo,min:d.min,obs:d.obs}];return a.map(function(x){return esc(x.motivo)+" · "+x.min+" min"+(x.obs?'<div class="sub">'+esc(x.obs)+"</div>":"")}).join("<br>")}
+function drawStops(){
+  var f=S.meta-(+$("qtd").value),e=eqMin(),rest=e-sumCur();
+  $("eq").textContent="Faltaram "+fmt(f)+" caixas, cerca de "+e+" min de parada. "+(rest>0?"Falta justificar "+rest+" min.":"Tempo todo justificado.");
+  $("eq").style.color=rest>0?"var(--warn)":"var(--ok)";
+  $("lst").innerHTML=cur.map(function(x,i){return '<span class="pill" style="margin:0 6px 6px 0">'+esc(x.motivo)+" · "+x.min+' min <a href="#" data-i="'+i+'" style="color:inherit" aria-label="Remover parada">✕</a></span>'}).join("");
+  [].forEach.call($("lst").querySelectorAll("a"),function(a){a.onclick=function(ev){ev.preventDefault();cur.splice(+a.dataset.i,1);$("min").dataset.t="";drawStops()}});
+  if(!$("min").dataset.t)$("min").value=rest>0?rest:"";
+  $("add").style.display=rest>0?"":"none";
+}
+function addStop(){var mi=Math.round(+$("min").value);if(!mi||mi<1)return false;cur.push({motivo:ms.value,min:mi,obs:$("obs").value.trim()});$("min").dataset.t="";$("obs").value="";drawStops();return true}
+function pctOf(q,m){return q/(m||S.meta||1)*100}
+function color(p){return p>=100?"var(--ok)":"var(--bad)"}
+
+function updateForm(){
+  var q=$("qtd").value;
+  if(q===""){$("pct").textContent="–";$("pct").style.color="";$("stop").classList.remove("on");return}
+  var p=pctOf(+q);
+  $("pct").textContent=p.toFixed(1).replace(".",",")+"%";
+  $("pct").style.color=color(p);
+  $("stop").classList.toggle("on",+q<S.meta);
+  if(+q<S.meta)drawStops();
+}
+function loadHour(){
+  var d=S.rows[hs.value];
+  $("qtd").value=d?d.qtd:"";
+  cur=d?(d.paradas?d.paradas.slice():(d.motivo?[{motivo:d.motivo,min:d.min,obs:d.obs||""}]:[])):[];$("min").value="";$("min").dataset.t="";
+  $("obs").value="";
+  
+  updateForm();
+}
+hs.onchange=loadHour;$("qtd").oninput=updateForm;$("min").oninput=function(){this.dataset.t="1"};
+
+$("save").onclick=function(){
+  var m=$("msg"),q=$("qtd").value;
+  if(q===""||+q<0){m.className="err";m.textContent="Digite a quantidade de caixas da hora.";return}
+  if(!S.linha||!S.produto||!S.meta){m.className="err";m.textContent="Preencha a linha, o produto e a meta por hora antes de lançar.";return}
+  q=Math.round(+q);var row={qtd:q,linha:S.linha,produto:S.produto,meta:S.meta,pct:S.metaPct,op:S.op||"",ef:Math.round(q/S.meta*1000)/10,dia:hoje()};
+  if(q<S.meta){
+    if(+$("min").value>=1)addStop();
+    var rest=eqMin()-sumCur();
+    if(rest>0){m.className="err";m.textContent="Ainda faltam "+rest+" min para justificar. Escolha o motivo e adicione outra parada.";return}
+    row.paradas=cur.slice();row.min=sumCur();
+  }
+  S.rows[hs.value]=row;save();
+  m.className="good";m.textContent="Hora "+hh(+hs.value)+" registrada.";
+  var nx=(+hs.value+1)%24;hs.value=nx;loadHour();render();
+};
+
+var SABORES=[["Coca-Cola",["Coca-Cola Original","Coca-Cola Sem Açúcar"]],["Fanta",["Fanta Laranja","Fanta Uva","Fanta Laranja Sem Açúcar","Fanta Uva Sem Açúcar"]],["Sprite",["Sprite","Sprite Sem Açúcar"]],["Kuat",["Kuat Guaraná","Kuat Guaraná Sem Açúcar"]],["Schweppes",["Schweppes Citrus","Schweppes Tônica","Schweppes Tônica Zero","Schweppes Ginger Ale"]]];
+var EMBS=["Lata 220 ml","Lata 269 ml","Lata 350 ml","PET 200 ml","PET 600 ml","PET 1 L","PET 1,5 L","PET 2 L","PET 2,5 L","Vidro retornável 290 ml","Vidro retornável 1 L"];
+var CK="painel-config-v1",CFG=null,admView=false;
+try{CFG=JSON.parse(localStorage.getItem(CK))}catch(e){}
+CFG=CFG||{};
+CFG.linhas=CFG.linhas||[1,2,3,4,5,6,7,8,9,10].map(function(n){return "Linha "+n});
+var NEWS=[["Coca-Cola",["Coca-Cola Original","Coca-Cola Sem Açúcar (Zero)","Coca-Cola Zero Cafeína","Coca-Cola Plus Café Espresso"]],["Fanta",["Fanta Laranja","Fanta Laranja Zero","Fanta Uva","Fanta Uva Zero","Fanta Guaraná","Fanta Guaraná Zero","Fanta Maracujá","Fanta Caju"]],["Sprite",["Sprite Original","Sprite Zero"]],["Kuat",["Kuat Guaraná"]],["Schweppes",["Schweppes Citrus","Schweppes Citrus Zero","Schweppes Tônica","Schweppes Tônica Zero","Schweppes Ginger Ale"]]];
+var OLDN=["Coca-Cola Original","Coca-Cola Sem Açúcar","Fanta Laranja","Fanta Uva","Fanta Laranja Sem Açúcar","Fanta Uva Sem Açúcar","Sprite","Sprite Sem Açúcar","Kuat Guaraná","Kuat Guaraná Sem Açúcar","Schweppes Citrus","Schweppes Tônica","Schweppes Tônica Zero","Schweppes Ginger Ale"];
+if(!CFG.sabores)CFG.sabores=NEWS.map(function(g){return [g[0],g[1].slice()]});
+else if((CFG.v||0)<2){
+  var cust=[];CFG.sabores.forEach(function(g){g[1].forEach(function(n){if(OLDN.indexOf(n)<0)cust.push([g[0],n])})});
+  CFG.sabores=NEWS.map(function(g){return [g[0],g[1].slice()]});
+  cust.forEach(function(c){var g=CFG.sabores.filter(function(x){return x[0].toLowerCase()===c[0].toLowerCase()})[0];if(!g){g=[c[0],[]];CFG.sabores.push(g)}if(g[1].indexOf(c[1])<0)g[1].push(c[1])});
+}
+var NEWE=["Lata 220 ml","Lata 250 ml","Lata 269 ml","Lata 310 ml","Lata 350 ml","Lata 473 ml","Lata 500 ml","PET 200 ml","PET 250 ml","PET 300 ml","PET 600 ml","PET 1 L","PET 1,5 L","PET 1,75 L","PET 2 L","PET 2,25 L","PET 2,5 L","PET 3 L","Vidro retornável 200 ml","Vidro retornável 290 ml","Vidro retornável 1 L","Vidro retornável 1,25 L","RefPET retornável 1,5 L","RefPET retornável 2 L","Vidro não retornável 250 ml","Vidro não retornável 290 ml","Vidro não retornável 600 ml","Vidro não retornável 1 L"];
+if(!CFG.embs)CFG.embs=NEWE.slice();else if((CFG.v||0)<3){CFG.embs=NEWE.concat(CFG.embs.filter(function(n){return NEWE.indexOf(n)<0}))}
+CFG.v=3;
+CFG.theme=CFG.theme||{bg:"#121314",panel:"#1b1c1e",tx:"#eceeef"};
+function saveCfg(){try{localStorage.setItem(CK,JSON.stringify(CFG))}catch(e){}dbSyncCfg()}
+saveCfg();
+var PRESETS=[{n:"Escuro clássico",t:{bg:"#121314",panel:"#1b1c1e",tx:"#eceeef"}}];
+function applyTheme(){var r=document.documentElement.style,t=CFG.theme;r.setProperty("--bg",t.bg);r.setProperty("--panel",t.panel);r.setProperty("--tx",t.tx);
+  var h=String(t.bg).replace("#",""),lum=(parseInt(h.substr(0,2),16)*299+parseInt(h.substr(2,2),16)*587+parseInt(h.substr(4,2),16)*114)/1000;document.body.classList.toggle("light",lum>150)}
+var ps=$("prod"),es=$("emb"),ls=$("linha");
+function buildLists(){
+  var cp=ps.value,ce=es.value,cl=ls.value;
+  ps.innerHTML="";ps.add(new Option("Selecione o refrigerante",""));
+  CFG.sabores.forEach(function(g){var og=document.createElement("optgroup");og.label=g[0];g[1].forEach(function(n){og.appendChild(new Option(n,n))});ps.appendChild(og)});
+  es.innerHTML="";es.add(new Option("Selecione a embalagem",""));CFG.embs.forEach(function(n){es.add(new Option(n,n))});
+  ls.innerHTML="";ls.add(new Option("Selecione a linha",""));CFG.linhas.forEach(function(n){ls.add(new Option(n,n))});
+  ensure(ps,cp);ensure(es,ce);ensure(ls,cl);ps.value=cp;es.value=ce;ls.value=cl;
+}
+applyTheme();buildLists();if(ativa<0)S=buildFab();applyLogo();
+function ensure(sel,v){if(v&&![].some.call(sel.options,function(o){return o.value===v}))sel.add(new Option(v,v))}
+function pick(sel,txt){if(sel.value==="__outro"){var n=(prompt(txt)||"").trim();if(n){ensure(sel,n);sel.value=n}else sel.value=""}}
+function combo(){return ps.value&&es.value?ps.value+" · "+es.value:""}
+function fillProds(){}
+function showCfg(){ensure(ls,S.linha);$("linha").value=S.linha||"";ensure(ps,S.sabor);ensure(es,S.emb);ps.value=S.sabor||"";es.value=S.emb||"";$("meta").value=S.meta||"";$("mp").value=S.metaPct||85;$("op").value=S.op||""}
+function readCfg(){S.linha=$("linha").value.trim();S.sabor=ps.value;S.emb=es.value;S.produto=combo();var v=Math.round(+$("meta").value);S.meta=v>0?v:0;var mp=+$("mp").value;S.metaPct=mp>0&&mp<=100?mp:85;S.op=$("op").value.replace(/\D/g,"");if(S.produto&&S.meta)S.produtos[S.produto]={meta:S.meta};save();fillProds();updateForm();render()}
+function onCombo(){var c=S.produtos[combo()];if(c){$("meta").value=c.meta}readCfg()}
+ps.onchange=function(){pick(ps,"Nome do refrigerante:");onCombo()};
+es.onchange=function(){pick(es,"Embalagem (ex.: PET 500 ml):");onCombo()};
+["linha","meta","mp"].forEach(function(i){$(i).oninput=readCfg});
+$("op").oninput=function(){var v=this.value.replace(/\D/g,"");if(v!==this.value)this.value=v;readCfg()};
+$("add").onclick=function(){if(!addStop()){var m=$("msg");m.className="err";m.textContent="Digite o tempo da parada em minutos."}};
+fillProds();showCfg();
+function applySetup(){document.body.classList.toggle("adm-view",admView);document.body.classList.toggle("fab",ativa<0);document.body.classList.toggle("fit",!!S.pronto);$("setup").style.display=S.pronto?"none":"";$("chg").style.display=S.pronto?"":"none"}
+$("ok").onclick=function(){readCfg();if(!S.linha||!S.produto||!S.meta){$("cfgMsg").textContent="Preencha linha, produto e caixas por hora.";return}$("cfgMsg").textContent="";S.pronto=true;save();applySetup();render()};
+$("chg").onclick=function(){var go=function(){S.pronto=false;save();showCfg();applySetup();window.scrollTo({top:0,behavior:"smooth"})};
+  if(Object.keys(S.rows).length)askArchive("Trocar linha ou produto","Deseja armazenar os dados lançados até agora (eficiência e paradas) antes de trocar?","troca de linha ou produto",go);else go()};
+applySetup();
+$("clr").onclick=function(){
+  var go=function(){S.rows={};S.linha="";S.sabor="";S.emb="";S.produto="";S.op="";S.meta=0;S.pronto=false;save();showCfg();applySetup();loadHour();render();$("msg").textContent="";window.scrollTo({top:0})};
+  if(Object.keys(S.rows).length)askArchive("Zerar o dia","Deseja armazenar os dados do dia (eficiência e paradas) antes de zerar?","zerar dia",go);else go();
+};
+
+function render(){
+  $("metaTx").textContent=fmt(S.meta);$("mpTx").textContent=S.metaPct;drawTabs();$("fInfo").textContent=S.fab?(S.info||""):"";
+  $("ttl").textContent=(S.linha||"Linha")+(S.produto?" · "+S.produto:"")+(S.op?" · OP "+S.op:"")+" · Produção por hora";
+  var keys=Object.keys(S.rows).map(Number).sort(function(a,b){return a-b});
+  var prod=0,stopMin=0,meta=0;
+  keys.forEach(function(k){var d=S.rows[k];prod+=d.qtd;stopMin+=d.min||0;meta+=mOf(d)});
+  var ef=meta?prod/meta*100:null;
+  $("kProd").textContent=fmt(prod);$("kMeta").textContent=fmt(meta);
+  $("kStop").textContent=stopMin+" min";
+  $("kEf").textContent=ef===null?"–":ef.toFixed(1).replace(".",",")+"%";
+  $("kEf").style.color=ef===null?"":(ef>=S.metaPct?"var(--ok)":"var(--bad)");
+
+  // gráfico de barras
+  var mx=120;keys.forEach(function(k){var d=S.rows[k];mx=Math.max(mx,pctOf(d.qtd,mOf(d))*1.1)});
+  var W=960,H=300,L=10,B=30,T=24,cw=(W-L*2)/24,ph=H-B-T,g="";
+  var yM=T+ph*(1-S.metaPct/mx);
+  for(var h=0;h<24;h++){
+    var x=L+h*cw,d=S.rows[h];
+    if(d){
+      var p=pctOf(d.qtd,mOf(d)),bh=ph*p/mx;
+      g+='<rect x="'+(x+5)+'" y="'+(T+ph-bh)+'" width="'+(cw-10)+'" height="'+bh+'" rx="3" fill="'+(p>=pOf(d)?"#22d65a":"#ff3b2f")+'"><title>'+hh(h)+": "+fmt(d.qtd)+" caixas ("+p.toFixed(0)+"%)"+(d.motivo?" – "+esc(d.motivo):"")+'</title></rect>';
+      g+='<text x="'+(x+cw/2)+'" y="'+(T+ph-bh-6)+'" text-anchor="middle" fill="#eceeef" font-size="13">'+p.toFixed(0)+'%</text>';
+    }else{g+='<rect x="'+(x+5)+'" y="'+(T+ph-3)+'" width="'+(cw-10)+'" height="3" fill="#2c2e31"/>'}
+    g+='<text x="'+(x+cw/2)+'" y="'+(H-10)+'" text-anchor="middle" fill="#8b9096" font-size="12">'+h+'h</text>';
+  }
+  g+='<line x1="'+L+'" x2="'+(W-L)+'" y1="'+yM+'" y2="'+yM+'" stroke="#f5b72b" stroke-dasharray="6 5" stroke-width="1.5"/>';
+  g+='<text x="'+(W-L)+'" y="'+(yM-6)+'" text-anchor="end" fill="#f5b72b" font-size="13">Meta '+S.metaPct+'%</text>';
+  $("chart").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Eficiência por hora">'+g+'</svg>';
+  var mxp=20,used={},g2="";
+  keys.forEach(function(k){var t=0;listOf(S.rows[k]).forEach(function(x){t+=x.min});mxp=Math.max(mxp,t/60*100*1.15)});
+  for(var h2=0;h2<24;h2++){
+    var x2=L+h2*cw,y=T+ph,tot=0;
+    listOf(S.rows[h2]).forEach(function(x){var pp=x.min/60*100,b2=ph*pp/mxp;y-=b2;tot+=x.min;used[x.motivo]=1;g2+='<rect x="'+(x2+5)+'" y="'+y+'" width="'+(cw-10)+'" height="'+b2+'" fill="'+colOf(x.motivo)+'"><title>'+hh(h2)+": "+esc(x.motivo)+" – "+Math.round(x.min*10)/10+" min ("+pp.toFixed(0)+"% da hora)</title></rect>"});
+    if(tot)g2+='<text x="'+(x2+cw/2)+'" y="'+(y-6)+'" text-anchor="middle" fill="#eceeef">'+(tot/60*100).toFixed(0)+'%</text>';
+    else g2+='<rect x="'+(x2+5)+'" y="'+(T+ph-3)+'" width="'+(cw-10)+'" height="3" fill="#2c2e31"/>';
+    g2+='<text x="'+(x2+cw/2)+'" y="'+(H-10)+'" text-anchor="middle" fill="#8b9096">'+h2+'h</text>';
+  }
+  var lg=Object.keys(used).map(function(m){return '<span><i style="background:'+colOf(m)+'"></i>'+esc(m)+'</span>'}).join("");
+  $("chart2").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Paradas por hora em porcentagem">'+g2+'</svg><div class="lg">'+(lg||'<span class="sub">Nenhuma parada registrada ainda.</span>')+'</div>';
+
+  // donut
+  var pc=ef===null?0:ef,R=70,C=2*Math.PI*R,dash=Math.min(pc,100)/100*C;
+  $("donut").innerHTML='<svg viewBox="0 0 200 200" style="max-width:260px;margin:auto" role="img" aria-label="Eficiência diária"><circle cx="100" cy="100" r="'+R+'" fill="none" stroke="#2c2e31" stroke-width="18"/><circle cx="100" cy="100" r="'+R+'" fill="none" stroke="'+(ef===null?"#2c2e31":ef>=S.metaPct?"#22d65a":ef>=S.metaPct*0.9?"#f5b72b":"#ff3b2f")+'" stroke-width="18" stroke-dasharray="'+dash+' '+C+'" transform="rotate(-90 100 100)" stroke-linecap="round"/><text x="100" y="108" text-anchor="middle" fill="#eceeef" font-size="34" font-weight="600">'+(ef===null?"–":pc.toFixed(1).replace(".",","))+'</text><text x="100" y="130" text-anchor="middle" fill="#8b9096" font-size="14">%</text></svg>';
+
+  // tiles
+  var t="";
+  for(var j=0;j<24;j++){
+    var d2=S.rows[j];
+    t+='<button class="tile '+(d2?(d2.qtd/mOf(d2)*100>=pOf(d2)?"ok":"bad"):"")+'" data-h="'+j+'"><small>'+hh(j)+'</small><b>'+(d2?fmt(d2.qtd):"–")+'</b></button>';
+  }
+  $("tiles").innerHTML=t;
+  Array.prototype.forEach.call(document.querySelectorAll(".tile"),function(b){b.onclick=function(){hs.value=b.dataset.h;loadHour();window.scrollTo({top:0,behavior:"smooth"})}});
+
+  // paradas
+  var st=keys.filter(function(k){return S.rows[k].qtd<mOf(S.rows[k])});
+  if(!st.length){$("stops").innerHTML='<div class="empty">Nenhuma parada registrada. Quando uma hora ficar abaixo de 100%, o motivo aparece aqui.</div>';return}
+  var rows=st.map(function(k){var d=S.rows[k],p=pctOf(d.qtd,mOf(d));
+    return "<tr><td>"+hh(k)+(d.produto?'<div class="sub">'+esc(d.linha||"")+" · "+esc(d.produto)+(d.op?" · OP "+esc(d.op):"")+"</div>":"")+"</td><td>"+fmt(d.qtd)+"</td><td><span class=\"pill\">"+p.toFixed(0)+"%</span></td><td>"+ptxt(d)+"</td><td>"+d.min+" min</td><td>"+fmt(mOf(d)-d.qtd)+"</td></tr>"}).join("");
+  $("stops").innerHTML="<table><thead><tr><th>Hora e produto</th><th>Caixas</th><th>Eficiência</th><th>Motivo da parada</th><th>Tempo parado</th><th>Caixas faltantes</th></tr></thead><tbody>"+rows+"</tbody></table>";
+}
+function drawTabs(){
+  $("admTab").classList.toggle("on",admView);$("tabs").innerHTML='<div class="tabx fab'+(ativa<0&&!admView?' on':'')+'"><button class="tabb" type="button" data-i="-1">Fábrica<small>todas as linhas</small></button></div>'+ABAS.map(function(a,i){return '<div class="tabx'+(i===ativa&&!admView?' on':'')+'"><button class="tabb" type="button" data-i="'+i+'">'+esc(a.linha||"Nova linha")+'<small>'+esc(a.produto||"sem produto")+'</small></button>'+(ABAS.length>1?'<a href="#" class="tabd" data-d="'+i+'" aria-label="Remover linha">✕</a>':'')+'</div>'}).join("");
+  [].forEach.call($("tabs").querySelectorAll(".tabb"),function(b){b.onclick=function(){if(+b.dataset.i!==ativa||admView)goTab(+b.dataset.i)}});
+  [].forEach.call($("tabs").querySelectorAll(".tabd"),function(a){a.onclick=function(e){e.preventDefault();
+    if(!a.dataset.c){a.dataset.c="1";a.textContent="Apagar?";setTimeout(function(){a.dataset.c="";a.textContent="✕"},4000);return}
+    var i=+a.dataset.d;dbLog("Aba de linha removida",(ABAS[i].linha||"sem nome")+" · "+(ABAS[i].produto||""));dbArchiveOf(ABAS[i]);dbDelAba(ABAS[i].id);ABAS.splice(i,1);if(ativa>=ABAS.length)ativa=ABAS.length-1;else if(i<ativa)ativa--;goTab(ativa)}});
+}
+function goTab(i){admView=false;ativa=i;S=i<0?buildFab():ABAS[i];save();$("msg").textContent="";hs.value=new Date().getHours();showCfg();applySetup();loadHour();render();if(i<0)refreshFab()}
+$("addTab").onclick=function(){ABAS.push({id:uid(),ord:Date.now(),meta:0,linha:"",produto:"",produtos:CAT,metaPct:S.metaPct||85,rows:{},pronto:false});goTab(ABAS.length-1);window.scrollTo({top:0})};
+var HASH={op:8772177184321400,adm:1408833579725464};
+function h53(s){var h1=0xdeadbeef,h2=0x41c6ce57;for(var i=0,c;i<s.length;i++){c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)}
+function setRole(r){admView=false;var b=document.body;b.classList.remove("locked","role-adm","role-op");b.classList.add("role-"+r);$("who").textContent=r==="adm"?"Administrador":"Operador";try{sessionStorage.setItem("painel-role",r)}catch(e){}applySetup();render()}
+function tryLogin(){var r=$("perfil").value;if(h53("painel:"+$("senha").value)===((r==="op"?CFG.hashOp:CFG.hashAdm)||HASH[r])){$("senha").value="";$("lerr").textContent="";setRole(r)}else{$("lerr").textContent="Senha incorreta.";$("senha").select()}}
+$("entrar").onclick=tryLogin;$("senha").onkeydown=function(e){if(e.key==="Enter")tryLogin()};
+$("out").onclick=function(){try{sessionStorage.removeItem("painel-role")}catch(e){}document.body.classList.remove("role-adm","role-op");admView=false;applySetup();document.body.classList.add("locked");$("senha").focus()};
+function chip(n,t,k){return '<span class="chip">'+esc(n)+' <a href="#" data-t="'+t+'" data-k="'+k+'" aria-label="Remover">✕</a></span>'}
+function chips(a,t){return a.map(function(n,i){return chip(n,t,i)}).join("")}
+function cfgChanged(){saveCfg();buildLists();buildAdmin()}
+function buildAdmin(){
+  $("tEntrada").value=CFG.titulo||titPadrao();$("mFab").value=CFG.metaFab||"";$("cBg").value=CFG.theme.bg;$("cPn").value=CFG.theme.panel;$("cTx").value=CFG.theme.tx;
+  $("lstLinhas").innerHTML=chips(CFG.linhas,"l");$("lstEmbs").innerHTML=chips(CFG.embs,"e");
+  $("lstProds").innerHTML=CFG.sabores.map(function(g,gi){return '<div style="margin-bottom:8px"><div class="sub">'+esc(g[0])+'</div><div class="chips">'+g[1].map(function(n,ni){return chip(n,"p",gi+"-"+ni)}).join("")+'</div></div>'}).join("");
+  [].forEach.call($("adm").querySelectorAll(".chip a"),function(a){a.onclick=function(e){e.preventDefault();var t=a.dataset.t,k=a.dataset.k;
+    var nome;if(t==="l"){nome=CFG.linhas.splice(+k,1)[0];dbLog("Linha removida",nome)}else if(t==="e"){nome=CFG.embs.splice(+k,1)[0];dbLog("Embalagem removida",nome)}else{var p=k.split("-");nome=CFG.sabores[+p[0]][1].splice(+p[1],1)[0];dbLog("Refrigerante removido",nome);if(!CFG.sabores[+p[0]][1].length)CFG.sabores.splice(+p[0],1)}
+    cfgChanged()}});
+}
+$("aLinha").onclick=function(){var v=$("nLinha").value.trim();if(v&&CFG.linhas.indexOf(v)<0){CFG.linhas.push(v);$("nLinha").value="";cfgChanged()}};
+$("aEmb").onclick=function(){var v=$("nEmb").value.trim();if(v&&CFG.embs.indexOf(v)<0){CFG.embs.push(v);$("nEmb").value="";cfgChanged()}};
+$("aProd").onclick=function(){var n=$("nProd").value.trim(),m=$("nMarca").value.trim()||"Outros";if(!n)return;var g=CFG.sabores.filter(function(x){return x[0].toLowerCase()===m.toLowerCase()})[0];if(!g){g=[m,[]];CFG.sabores.push(g)}if(g[1].indexOf(n)<0)g[1].push(n);$("nProd").value="";cfgChanged()};
+[["cBg","bg"],["cPn","panel"],["cTx","tx"]].forEach(function(c){$(c[0]).oninput=function(){CFG.theme[c[1]]=this.value;saveCfg();applyTheme()}});
+$("cReset").onclick=function(){CFG.theme=clean(PRESETS[0].t);saveCfg();applyTheme();buildAdmin()};
+$("sFab").onclick=function(){var raw=$("mFab").value.trim(),v=Math.round(+raw),m=$("fabMsg");if(raw&&!(v>0&&v<=100)){m.className="err";m.textContent="Digite um número de 1 a 100.";return}CFG.metaFab=raw?v:0;saveCfg();m.className="good";m.textContent=raw?"Meta da fábrica salva: "+v+"%.":"Salvo. A fábrica vai usar a média das metas das linhas."};
+$("sPass").onclick=function(){var a=$("pOp").value,b=$("pOp2").value,m=$("passMsg");
+  if(a.length<4){m.className="err";m.textContent="A senha precisa ter pelo menos 4 caracteres.";return}
+  if(a!==b){m.className="err";m.textContent="As duas senhas não são iguais.";return}
+  CFG[$("pUser").value==="adm"?"hashAdm":"hashOp"]=h53("painel:"+a);saveCfg();$("pOp").value="";$("pOp2").value="";dbLog("Senha alterada",$("pUser").value==="adm"?"Administrador":"Operador");m.className="good";m.textContent="Senha do "+($("pUser").value==="adm"?"administrador":"operador")+" alterada."};
+$("rPass").onclick=function(){var adm=$("pUser").value==="adm";delete CFG[adm?"hashAdm":"hashOp"];saveCfg();$("pOp").value="";$("pOp2").value="";dbLog("Senha restaurada ao padrão",adm?"Administrador":"Operador");var m=$("passMsg");m.className="good";m.textContent="A senha do "+(adm?"administrador voltou ao padrão (Adm@2026).":"operador voltou ao padrão (Op@2026).")};
+function titPadrao(){return "Gestão à vista - Coca Cola FEMSA Marília"}
+function applyTitulo(){var t=CFG.titulo||titPadrao();$("loginT").textContent=t;document.title=t}
+$("sTit").onclick=function(){var v=$("tEntrada").value.trim(),m=$("titMsg");if(v&&v!==titPadrao())CFG.titulo=v;else delete CFG.titulo;saveCfg();applyTitulo();$("tEntrada").value=CFG.titulo||titPadrao();m.className="good";m.textContent=CFG.titulo?"Nome da entrada salvo.":"Voltou ao nome original."};
+function applyLogo(){applyTitulo();var src=CFG.logo||"";[].forEach.call(document.querySelectorAll(".lg-img"),function(i){if(src){i.src=src;i.hidden=false}else{i.removeAttribute("src");i.hidden=true}});$("logoTx").hidden=!!src}
+$("logoFile").onchange=function(){var f=this.files&&this.files[0],m=$("logoMsg");if(!f)return;
+  if(!/^image\//.test(f.type)){m.className="err";m.textContent="Escolha um arquivo de imagem.";return}
+  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var h=Math.min(96,im.height),w=Math.round(im.width*h/im.height);if(w>400){w=400;h=Math.round(im.height*w/im.width)}var c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);
+    try{CFG.logo=c.toDataURL("image/png")}catch(e){m.className="err";m.textContent="Não foi possível ler essa imagem.";return}
+    saveCfg();applyLogo();m.className="good";m.textContent="Logo salvo.";$("logoFile").value=""};
+    im.onerror=function(){m.className="err";m.textContent="Imagem inválida."};im.src=rd.result};rd.readAsDataURL(f)};
+$("logoRm").onclick=function(){delete CFG.logo;saveCfg();applyLogo();var m=$("logoMsg");m.className="good";m.textContent="Logo removido."};
+$("fDia").value=hoje();
+$("fDia").onchange=function(){fabDia=this.value||"";refreshFab()};
+$("fHoje").onclick=function(){fabDia="";$("fDia").value=hoje();refreshFab()};
+function saveFile(name,buf,m){
+  var blobDl=function(){var b=new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();m.className="good";m.textContent="Arquivo gerado: "+name};
+  try{if(window.claude&&claude.use){claude.use("downloads").then(function(dl){if(!dl){blobDl();return}
+    dl.save({filename:name,data:buf}).then(function(){m.className="good";m.textContent="Arquivo salvo: "+name}).catch(function(e){m.className="err";m.textContent=(e&&e.code==="declined")?"Download cancelado.":"Não foi possível salvar o arquivo ("+((e&&e.code)||"erro")+")."})}).catch(blobDl);return}}catch(e){}
+  blobDl()}
+function xlsxExport(){
+  var m=$("xlMsg");
+  if(typeof XLSX==="undefined"){m.className="err";m.textContent="Não foi possível carregar o gerador de Excel (precisa de internet).";return}
+  m.className="";m.textContent="Preparando a planilha...";
+  loadHist(function(){rebuildAll();
+    var de=$("xDe").value,ate=$("xAte").value;
+    if(de&&ate&&de>ate){m.className="err";m.textContent="A data inicial é maior que a data final.";return}
+    var A=ALL.filter(function(e){return (!de||e.dia>=de)&&(!ate||e.dia<=ate)});
+    if(!A.length){m.className="err";m.textContent=(de||ate)?"Não há dados armazenados nesse período.":"Não há dados armazenados para exportar.";return}
+    A.sort(function(a,b){return a.dia<b.dia?-1:a.dia>b.dia?1:(a.ln<b.ln?-1:a.ln>b.ln?1:a.h-b.h)});
+    var H=[["Data","Linha","Produto","OP","Hora","Caixas","Capacidade (caixas/h)","Eficiência (%)","Meta de eficiência (%)","Atingiu a meta","Tempo parado (min)"]],P=[["Data","Linha","Produto","OP","Hora","Motivo da parada","Minutos","Observação"]],FH={},DD={};
+    A.forEach(function(e){var r=e.r,meta=r.meta||0,ef=meta?Math.round(r.qtd/meta*1000)/10:0,mp=r.pct||0,tm=0;
+      listOf(r).forEach(function(x){tm+=x.min;P.push([e.dia,e.ln,e.pd,e.op,e.h,x.motivo,x.min,x.obs||""])});
+      H.push([e.dia,e.ln,e.pd,e.op,e.h,r.qtd,meta,ef,mp,ef>=mp?"Sim":"Não",tm]);
+      var k=e.dia+"|"+e.h,f=FH[k]||(FH[k]={dia:e.dia,h:e.h,q:0,m:0,n:0,t:0});f.q+=r.qtd;f.m+=meta;f.n++;f.t+=tm;
+      var d=DD[e.dia]||(DD[e.dia]={q:0,m:0,t:0,h:0});d.q+=r.qtd;d.m+=meta;d.t+=tm;d.h++});
+    var F=[["Data","Hora","Caixas (total)","Capacidade (total)","Eficiência da fábrica (%)","Linhas que lançaram","Tempo parado (min)"]];
+    Object.keys(FH).map(function(k){return FH[k]}).sort(function(a,b){return a.dia<b.dia?-1:a.dia>b.dia?1:a.h-b.h}).forEach(function(f){F.push([f.dia,f.h,f.q,f.m,f.m?Math.round(f.q/f.m*1000)/10:0,f.n,f.t])});
+    var R=[["Data","Caixas","Capacidade","Eficiência (%)","Horas lançadas (linhas x horas)","Tempo parado (min)"]];
+    Object.keys(DD).sort().forEach(function(k){var d=DD[k];R.push([k,d.q,d.m,d.m?Math.round(d.q/d.m*1000)/10:0,d.h,d.t])});
+    var wb=XLSX.utils.book_new();
+    [["Resumo por dia",R],["Fábrica por hora",F],["Linhas por hora",H],["Paradas",P]].forEach(function(s){var ws=XLSX.utils.aoa_to_sheet(s[1]);ws["!cols"]=s[1][0].map(function(){return {wch:22}});XLSX.utils.book_append_sheet(wb,ws,s[0])});
+    saveFile("gestao-a-vista-"+((de||ate)?(de||"inicio")+"_a_"+(ate||hoje()):hoje())+".xlsx",XLSX.write(wb,{bookType:"xlsx",type:"array"}),m);
+  })}
+$("xlBtn").onclick=xlsxExport;
+$("admTab").onclick=function(){admView=true;buildAdmin();applySetup();render();window.scrollTo({top:0})};
+function uid(){return "l"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function clean(o){return JSON.parse(JSON.stringify(o))}
+function dbStat(k){var e=$("dbst");if(!e)return;e.textContent=k==="ok"?"● Banco de dados: salvo":k==="err"?"⚠ Banco de dados: erro ao salvar":k==="on"?"● Banco de dados conectado":"Salvo só neste navegador";e.style.color=k==="err"?"var(--bad)":(k==="ok"||k==="on")?"var(--ok)":""}
+function dbSet(path,get){if(!DB)return;clearTimeout(timers[path]);timers[path]=setTimeout(function(){delete timers[path];DB.doc(path).set(clean(get())).then(function(){dbStat("ok")}).catch(function(){dbStat("err")})},500)}
+function abaData(a){var o={};Object.keys(a).forEach(function(k){if(k!=="produtos")o[k]=a[k]});return o}
+function dbSyncAba(){if(!DB||ativa<0||!S||!S.id)return;var a=S;dbSet("painel_abas/"+a.id,function(){return abaData(a)})}
+function dbSyncCfg(){if(!DB)return;clearTimeout(timers["painel_cfg/geral"]);delete timers["painel_cfg/geral"];DB.doc("painel_cfg/geral").set(clean({cfg:CFG,cat:CAT})).then(function(){dbStat("ok")}).catch(function(){dbStat("err")})}
+function dbLog(tipo,det){if(!DB)return;var t=new Date();DB.doc("painel_log/"+t.getTime()+"_"+Math.random().toString(36).slice(2,5)).set(clean({tipo:tipo,detalhe:det,por:document.body.classList.contains("role-adm")?"Administrador":"Operador",quando:t.toISOString()})).catch(function(){})}
+function dbArchiveOf(a){if(!DB||!a||!a.id||!Object.keys(a.rows||{}).length)return;var t=new Date();DB.doc("painel_hist/"+a.id+"_"+t.getTime()).set(clean({lid:a.id,dia:t.toLocaleDateString("sv-SE"),linha:a.linha,produto:a.produto,op:a.op||"",meta:a.meta,metaPct:a.metaPct,rows:a.rows,arquivadoEm:t.toISOString(),motivo:"linha removida"})).catch(function(){dbStat("err")})}
+function dbDelAba(id){if(!DB||!id)return;clearTimeout(timers["painel_abas/"+id]);DB.doc("painel_abas/"+id).delete().catch(function(){dbStat("err")})}
+function dbArchive(motivo){if(!S||!S.id||!Object.keys(S.rows).length)return false;var t=new Date(),rec=clean({lid:S.id,dia:t.toLocaleDateString("sv-SE"),linha:S.linha,produto:S.produto,op:S.op||"",meta:S.meta,metaPct:S.metaPct,rows:S.rows,arquivadoEm:t.toISOString(),motivo:motivo||"zerar dia"});
+  if(DB){DB.doc("painel_hist/"+S.id+"_"+t.getTime()).set(rec).then(function(){dbStat("ok")}).catch(function(){dbStat("err")})}
+  else{try{var h=JSON.parse(localStorage.getItem("painel-hist-v1")||"[]");h.push(rec);localStorage.setItem("painel-hist-v1",JSON.stringify(h.slice(-200)))}catch(e){}}
+  return true}
+function askArchive(titulo,texto,motivo,go){
+  $("askT").textContent=titulo;$("askP").textContent=texto;$("ask").classList.add("on");
+  var close=function(){$("ask").classList.remove("on")};
+  $("askSim").onclick=function(){close();var ok=dbArchive(motivo);go();var m=$("msg");m.className="good";m.textContent=ok?(DB?"Dados armazenados no banco de dados.":"Dados armazenados neste navegador."):""};
+  $("askNao").onclick=function(){close();go()};
+  $("askCan").onclick=close;
+}
+function startDb(db){
+  DB=db;dbStat("on");
+  db.doc("painel_cfg/geral").onSnapshot(function(sn){
+    if(sn.metadata&&sn.metadata.hasPendingWrites)return;
+    if(!sn.exists){dbSyncCfg();return}
+    if(timers["painel_cfg/geral"])return;
+    var d=clean(sn.data()||{});
+    if(d.cfg&&d.cfg.linhas&&d.cfg.sabores&&d.cfg.embs&&d.cfg.theme)CFG=d.cfg;
+    for(var k in CAT)delete CAT[k];Object.assign(CAT,d.cat||{});lastCat=JSON.stringify(CAT);
+    applyTheme();buildLists();if(admView)buildAdmin();applyLogo();render();
+  },function(){dbStat("err")});
+  db.collection("painel_abas").onSnapshot(function(qs){
+    if(qs.metadata&&qs.metadata.hasPendingWrites)return;
+    if(qs.empty){ABAS.forEach(function(a){DB.doc("painel_abas/"+a.id).set(clean(abaData(a))).catch(function(){dbStat("err")})});return}
+    var curId=(ativa>=0&&ABAS[ativa])?ABAS[ativa].id:null,old={};
+    ABAS.forEach(function(a){old[a.id]=a});
+    var docs=qs.docs.map(function(d){var a=clean(d.data());a.id=a.id||d.id;return (timers["painel_abas/"+a.id]&&old[a.id])?old[a.id]:a});
+    docs.sort(function(a,b){return (a.ord||0)-(b.ord||0)});
+    docs.forEach(function(a){a.produtos=CAT;a.rows=a.rows||{};a.metaPct=a.metaPct||85;a.produto=a.produto||""});
+    ABAS=docs;
+    if(ativa>=0){var ix=-1;ABAS.forEach(function(a,i){if(a.id===curId)ix=i});ativa=ix>=0?ix:0}
+    S=ativa<0?buildFab():ABAS[ativa];
+    try{localStorage.setItem(KEY,JSON.stringify({abas:ABAS,ativa:ativa}))}catch(e){}
+    applySetup();render();
+  },function(){dbStat("err")});
+}
+dbStat("local");
+var FBCFG={apiKey:"AIzaSyA_C6m5V_b1Z2whyQR_l1TmQhgN7y1rbHg",authDomain:"gestao-femsa.firebaseapp.com",databaseURL:"https://gestao-femsa-default-rtdb.firebaseio.com",projectId:"gestao-femsa",storageBucket:"gestao-femsa.firebasestorage.app",messagingSenderId:"122078168606",appId:"1:122078168606:web:952e843b83d07491e8900f"};
+function fbAdapter(fdb){
+  function sd(s){var v=s.val(),ok=!!(v&&v.j);return {exists:ok,id:s.key,metadata:{hasPendingWrites:false},data:function(){return ok?JSON.parse(v.j):undefined}}}
+  function sq(s){var docs=[];s.forEach(function(c){var v=c.val();if(v&&v.j)docs.push({id:c.key,data:function(){return JSON.parse(v.j)}})});return {empty:!docs.length,docs:docs,metadata:{hasPendingWrites:false}}}
+  return {
+    doc:function(p){var r=fdb.ref(p);return {
+      get:function(){return r.get().then(sd)},
+      set:function(d){return r.set({j:JSON.stringify(d)})},
+      delete:function(){return r.remove()},
+      onSnapshot:function(cb,err){r.on("value",function(s){cb(sd(s))},err||function(){})}}},
+    collection:function(p){var r=fdb.ref(p);return {
+      get:function(){return r.get().then(sq)},
+      onSnapshot:function(cb,err){r.on("value",function(s){cb(sq(s))},err||function(){})}}}
+  }}
+try{if(window.firebase){firebase.initializeApp(FBCFG);var fdb=firebase.database();startDb(fbAdapter(fdb));fdb.ref(".info/connected").on("value",function(s){dbStat(s.val()?"on":"local")})}else dbStat("local")}catch(e){dbStat("err")}
+try{var rs=sessionStorage.getItem("painel-role");if(rs==="adm"||rs==="op")setRole(rs)}catch(e){}
+loadHour();render();
+})();
+</script>
+</body>
+</html>
