@@ -377,7 +377,8 @@ $("save").onclick=function(){
 
 var SABORES=[["Coca-Cola",["Coca-Cola Original","Coca-Cola Sem Açúcar"]],["Fanta",["Fanta Laranja","Fanta Uva","Fanta Laranja Sem Açúcar","Fanta Uva Sem Açúcar"]],["Sprite",["Sprite","Sprite Sem Açúcar"]],["Kuat",["Kuat Guaraná","Kuat Guaraná Sem Açúcar"]],["Schweppes",["Schweppes Citrus","Schweppes Tônica","Schweppes Tônica Zero","Schweppes Ginger Ale"]]];
 var EMBS=["Lata 220 ml","Lata 269 ml","Lata 350 ml","PET 200 ml","PET 600 ml","PET 1 L","PET 1,5 L","PET 2 L","PET 2,5 L","Vidro retornável 290 ml","Vidro retornável 1 L"];
-var CK="painel-config-v1",CFG=null,admView=false;
+var CK="painel-config-v1",CFG=null,admView=false,LOGO="";
+try{LOGO=localStorage.getItem("painel-logo-v1")||""}catch(e){}
 try{CFG=JSON.parse(localStorage.getItem(CK))}catch(e){}
 CFG=CFG||{};
 CFG.linhas=CFG.linhas||[1,2,3,4,5,6,7,8,9,10].map(function(n){return "Linha "+n});
@@ -392,6 +393,7 @@ else if((CFG.v||0)<2){
 var NEWE=["Lata 220 ml","Lata 250 ml","Lata 269 ml","Lata 310 ml","Lata 350 ml","Lata 473 ml","Lata 500 ml","PET 200 ml","PET 250 ml","PET 300 ml","PET 600 ml","PET 1 L","PET 1,5 L","PET 1,75 L","PET 2 L","PET 2,25 L","PET 2,5 L","PET 3 L","Vidro retornável 200 ml","Vidro retornável 290 ml","Vidro retornável 1 L","Vidro retornável 1,25 L","RefPET retornável 1,5 L","RefPET retornável 2 L","Vidro não retornável 250 ml","Vidro não retornável 290 ml","Vidro não retornável 600 ml","Vidro não retornável 1 L"];
 if(!CFG.embs)CFG.embs=NEWE.slice();else if((CFG.v||0)<3){CFG.embs=NEWE.concat(CFG.embs.filter(function(n){return NEWE.indexOf(n)<0}))}
 CFG.v=3;
+if(CFG.logo){LOGO=CFG.logo;delete CFG.logo;try{localStorage.setItem("painel-logo-v1",LOGO)}catch(e){}}
 CFG.theme=CFG.theme||{bg:"#121314",panel:"#1b1c1e",tx:"#eceeef"};
 function saveCfg(){try{localStorage.setItem(CK,JSON.stringify(CFG))}catch(e){}dbSyncCfg()}
 saveCfg();
@@ -540,14 +542,22 @@ $("rPass").onclick=function(){var adm=$("pUser").value==="adm";delete CFG[adm?"h
 function titPadrao(){return "Gestão à vista - Coca Cola FEMSA Marília"}
 function applyTitulo(){var t=CFG.titulo||titPadrao();$("loginT").textContent=t;document.title=t}
 $("sTit").onclick=function(){var v=$("tEntrada").value.trim(),m=$("titMsg");if(v&&v!==titPadrao())CFG.titulo=v;else delete CFG.titulo;saveCfg();applyTitulo();$("tEntrada").value=CFG.titulo||titPadrao();m.className="good";m.textContent=CFG.titulo?"Nome da entrada salvo.":"Voltou ao nome original."};
-function applyLogo(){applyTitulo();var src=CFG.logo||"";[].forEach.call(document.querySelectorAll(".lg-img"),function(i){if(src){i.src=src;i.hidden=false}else{i.removeAttribute("src");i.hidden=true}});$("logoTx").hidden=!!src}
+function applyLogo(){applyTitulo();var src=LOGO||"";[].forEach.call(document.querySelectorAll(".lg-img"),function(i){if(src){i.src=src;i.hidden=false}else{i.removeAttribute("src");i.hidden=true}});$("logoTx").hidden=!!src}
+function dbSaveLogo(m){
+  if(!DB){m.className="good";m.textContent="Logo salvo neste navegador.";return}
+  m.className="";m.textContent="Gravando no banco de dados...";
+  DB.doc("painel_logo/geral").set(clean({logo:LOGO})).then(function(){m.className="good";m.textContent=LOGO?"Logo salvo no banco de dados.":"Logo removido do banco de dados.";dbStat("ok")}).catch(function(e){m.className="err";m.textContent="O logo ficou salvo só neste navegador. Erro ao gravar no banco: "+String((e&&(e.code||e.message))||"desconhecido");dbStat("err",e)})
+}
 $("logoFile").onchange=function(){var f=this.files&&this.files[0],m=$("logoMsg");if(!f)return;
   if(!/^image\//.test(f.type)){m.className="err";m.textContent="Escolha um arquivo de imagem.";return}
-  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var h=Math.min(96,im.height),w=Math.round(im.width*h/im.height);if(w>400){w=400;h=Math.round(im.height*w/im.width)}var c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);
-    try{CFG.logo=c.toDataURL("image/png")}catch(e){m.className="err";m.textContent="Não foi possível ler essa imagem.";return}
-    saveCfg();applyLogo();m.className="good";m.textContent="Logo salvo.";$("logoFile").value=""};
+  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){
+    var h=Math.min(80,im.height||80),w=Math.round((im.width||80)*h/(im.height||80));if(w>320){w=320;h=Math.round(im.height*w/im.width)}
+    function enc(){var c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);var u=c.toDataURL("image/webp",.9);if(u.indexOf("data:image/webp")!==0)u=c.toDataURL("image/png");return u}
+    var u;try{u=enc();while(u.length>120000&&w>60){w=Math.round(w*.8);h=Math.round(h*.8);u=enc()}}catch(e){m.className="err";m.textContent="Não foi possível ler essa imagem.";return}
+    LOGO=u;try{localStorage.setItem("painel-logo-v1",u)}catch(e){}
+    applyLogo();$("logoFile").value="";dbSaveLogo(m)};
     im.onerror=function(){m.className="err";m.textContent="Imagem inválida."};im.src=rd.result};rd.readAsDataURL(f)};
-$("logoRm").onclick=function(){delete CFG.logo;saveCfg();applyLogo();var m=$("logoMsg");m.className="good";m.textContent="Logo removido."};
+$("logoRm").onclick=function(){LOGO="";try{localStorage.removeItem("painel-logo-v1")}catch(e){}applyLogo();dbSaveLogo($("logoMsg"))};
 $("del").onclick=function(){var b=this,h=hs.value,d=S.rows[h],m=$("msg");if(!d)return;
   if(!b.dataset.c){b.dataset.c="1";b.textContent="Clique de novo para apagar";setTimeout(function(){b.dataset.c="";b.textContent="Apagar esta hora"},4000);return}
   S.apagados=S.apagados||{};S.apagados[(d.dia||hoje())+"|"+h]=1;delete S.rows[h];save();dbLog("Hora apagada",(S.linha||"")+" · "+hh(+h));loadHour();render();m.className="good";m.textContent="Hora "+hh(+h)+" apagada."};
@@ -587,11 +597,11 @@ $("xlBtn").onclick=xlsxExport;
 $("admTab").onclick=function(){admView=true;buildAdmin();applySetup();render();window.scrollTo({top:0})};
 function uid(){return "l"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function clean(o){return JSON.parse(JSON.stringify(o))}
-function dbStat(k){var e=$("dbst");if(!e)return;e.textContent=k==="ok"?"● Banco de dados: salvo":k==="err"?"⚠ Banco de dados: erro ao salvar":k==="on"?"● Banco de dados conectado":"Salvo só neste navegador";e.style.color=k==="err"?"var(--bad)":(k==="ok"||k==="on")?"var(--ok)":""}
-function dbSet(path,get){if(!DB)return;clearTimeout(timers[path]);timers[path]=setTimeout(function(){delete timers[path];DB.doc(path).set(clean(get())).then(function(){dbStat("ok")}).catch(function(){dbStat("err")})},500)}
+function dbStat(k,er){var el=$("dbst");if(!el)return;var det=er?" ("+String(er.code||er.message||"").slice(0,60)+")":"";el.textContent=k==="ok"?"● Banco de dados: salvo":k==="err"?"⚠ Banco de dados: erro ao salvar"+det:k==="on"?"● Banco de dados conectado":"Salvo só neste navegador";el.style.color=k==="err"?"var(--bad)":(k==="ok"||k==="on")?"var(--ok)":""}
+function dbSet(path,get){if(!DB)return;clearTimeout(timers[path]);timers[path]=setTimeout(function(){delete timers[path];DB.doc(path).set(clean(get())).then(function(){dbStat("ok")}).catch(function(e){dbStat("err",e)})},500)}
 function abaData(a){var o={};Object.keys(a).forEach(function(k){if(k!=="produtos")o[k]=a[k]});return o}
 function dbSyncAba(){if(!DB||ativa<0||!S||!S.id)return;var a=S;dbSet("painel_abas/"+a.id,function(){return abaData(a)})}
-function dbSyncCfg(){if(!DB)return;clearTimeout(timers["painel_cfg/geral"]);delete timers["painel_cfg/geral"];DB.doc("painel_cfg/geral").set(clean({cfg:CFG,cat:CAT})).then(function(){dbStat("ok")}).catch(function(){dbStat("err")})}
+function dbSyncCfg(){if(!DB)return;clearTimeout(timers["painel_cfg/geral"]);delete timers["painel_cfg/geral"];DB.doc("painel_cfg/geral").set(clean({cfg:CFG,cat:CAT})).then(function(){dbStat("ok")}).catch(function(e){dbStat("err",e)})}
 function dbLog(tipo,det){if(!DB)return;var t=new Date();DB.doc("painel_log/"+t.getTime()+"_"+Math.random().toString(36).slice(2,5)).set(clean({tipo:tipo,detalhe:det,por:document.body.classList.contains("role-adm")?"Administrador":"Operador",quando:t.toISOString()})).catch(function(){})}
 function dbArchiveOf(a){if(!DB||!a||!a.id||!Object.keys(a.rows||{}).length)return;var t=new Date();DB.doc("painel_hist/"+a.id+"_"+t.getTime()).set(clean({lid:a.id,dia:t.toLocaleDateString("sv-SE"),linha:a.linha,produto:a.produto,op:a.op||"",meta:a.meta,metaPct:a.metaPct,rows:a.rows,arquivadoEm:t.toISOString(),motivo:"linha removida"})).catch(function(){dbStat("err")})}
 function dbDelAba(id){if(!DB||!id)return;clearTimeout(timers["painel_abas/"+id]);DB.doc("painel_abas/"+id).delete().catch(function(){dbStat("err")})}
@@ -608,6 +618,11 @@ function askArchive(titulo,texto,motivo,go){
 }
 function startDb(db){
   DB=db;dbStat("on");
+  db.doc("painel_logo/geral").onSnapshot(function(sn){
+    if(sn.metadata&&sn.metadata.hasPendingWrites)return;
+    if(!sn.exists){if(LOGO)DB.doc("painel_logo/geral").set(clean({logo:LOGO})).catch(function(e){dbStat("err",e)});return}
+    LOGO=(sn.data()||{}).logo||"";try{localStorage.setItem("painel-logo-v1",LOGO)}catch(e){}applyLogo();
+  },function(e){dbStat("err",e)});
   db.doc("painel_cfg/geral").onSnapshot(function(sn){
     if(sn.metadata&&sn.metadata.hasPendingWrites)return;
     if(!sn.exists){dbSyncCfg();return}
